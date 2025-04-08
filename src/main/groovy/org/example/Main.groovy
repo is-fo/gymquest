@@ -8,6 +8,7 @@ static void main(String[] args) {
     println "Hello world!"
     println("Hello Groovy")
 
+    MongoService.connect()
     Runtime.getRuntime().addShutdownHook(new Thread() {
         void run() {
             MongoService.close()
