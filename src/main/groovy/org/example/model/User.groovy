@@ -23,15 +23,25 @@ class User extends Entity {
         .append("exp", this.exp)
     }
 
+    static def createUser(Document document) {
+        def user = new User(
+                document.get('username') as String,
+                document.get('password') as String,
+                document.get('registerDate') as Date,
+                document.get('exp') as Integer
+        )
+        user._id = document.get('_id') as String
+        return user
+    }
 
     @Override
-    public String toString() {
+    String toString() {
         return "User{" +
                 "_id='" + (_id != null ? _id : "0") + '\'' +
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", registerDate=" + registerDate +
                 ", exp=" + exp +
-                '}';
+                '}'
     }
 }
