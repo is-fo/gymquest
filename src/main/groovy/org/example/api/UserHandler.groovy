@@ -22,4 +22,18 @@ class UserHandler {
             println "$user has been registred, id: $_id"
         }
     }
+
+    def login(String username, String inputPassword){
+        def userDoc = userRepository.findByUsername(username)
+        if (userDoc != null){
+            String passwordHash = userDoc.get("password")
+            if (BCrypt.checkpw(inputPassword, passwordHash)) {
+                println "Lösenordet är korrekt!"
+            } else {
+                println "Fel lösenord."
+            }
+        } else {
+            println "Fel användarnamn."
+        }
+    }
 }

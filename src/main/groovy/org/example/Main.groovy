@@ -19,5 +19,6 @@ static void main(String[] args) {
 
     def userHandler = new UserHandler()
     // skapa användare -> userHandler.registerUser("Kalle", "mypassword")
+    userHandler.login("Kalle", "mypassword")
 
 }
