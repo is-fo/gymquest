@@ -7,13 +7,10 @@ import com.mongodb.ServerApi
 import com.mongodb.ServerApiVersion
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
-import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import org.bson.BsonDocument
 import org.bson.BsonInt64
-import org.bson.Document
 import org.bson.conversions.Bson
-import org.example.model.User
 
 class MongoService {
 
@@ -44,6 +41,10 @@ class MongoService {
                 Bson command = new BsonDocument("ping", new BsonInt64(1))
                 database.runCommand(command)
                 println 'Connection successful!'
+
+//                MongoCollection<Document> usersCollection = database.getCollection("users")
+//                usersCollection.createIndex(new Document("user", 1), new IndexOptions().unique(true))
+//                println 'Unique index created on \'username\' in \'users\' collection.'
             } catch (MongoException me) {
                 System.err.println(me)
             }
@@ -52,20 +53,5 @@ class MongoService {
 
     def static close() {
         mongoClient?.close()
-    }
-
-    def static insertUser(User user) {
-        def collection = database.getCollection("users")
-
-        def userDoc = user.createDocument()
-
-        try {
-            def result = collection.insertOne(userDoc)
-            def _id = result.getInsertedId().asObjectId().getValue()
-            println("Inserted an user with id: $_id")
-            return _id
-        } catch (Exception e) {
-            println "Error inserting user ${e.message}"
-        }
     }
 }
