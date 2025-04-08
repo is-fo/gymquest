@@ -1,17 +1,20 @@
 package org.example.repository
 
+import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters
 import org.bson.Document
 import org.bson.types.ObjectId
 import org.example.model.Entity
 
-class Repository<T extends Entity> {
+abstract class Repository<T extends Entity> {
+
+    abstract MongoCollection<Document> collection
 
     def insert(T entity) {
         try {
             def result = collection.insertOne(entity.createDocument() as Document)
             def _id = result.getInsertedId().asObjectId().getValue().toString()
-            entity.set_id(_id)
+            entity.set_id(_id) //ska entiteten returneras istället?
             return _id
         } catch (Exception e) {
             println "Error insert entity: ${e.message}"

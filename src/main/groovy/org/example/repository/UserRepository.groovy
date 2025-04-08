@@ -1,14 +1,11 @@
 package org.example.repository
 
-import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters
-import org.bson.Document
 import org.example.service.MongoService
 
 class UserRepository extends Repository {
 
     static final UserRepository instance = new UserRepository()
-    MongoCollection<Document> collection;
 
     private UserRepository() {
         this.collection = MongoService.getDatabase().getCollection("users")
