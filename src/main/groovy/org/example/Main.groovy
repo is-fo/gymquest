@@ -1,7 +1,7 @@
 package org.example
 
-import org.example.model.User
-import org.example.repository.Repository
+import org.example.api.UserHandler
+import org.example.repository.UserRepository
 import org.example.service.MongoService
 
 static void main(String[] args) {
@@ -13,15 +13,10 @@ static void main(String[] args) {
             MongoService.close()
         }
     })
-    def user = new User("Sir Printsalot",
-            "hej1235!!!as",
-            new Date(),
-    736)
-    MongoService.connect()
 
-    def userRepository = new Repository<User>(MongoService.database, "users")
-    def userId = userRepository.insert(user)
-    user.set_id(userId)
-    println userRepository.findById(userId)
-    println user.toString()
+    println UserRepository.getInstance().findByUsername("Kalle")
+
+    def userHandler = new UserHandler()
+    // skapa användare -> userHandler.registerUser("Kalle", "mypassword")
+
 }

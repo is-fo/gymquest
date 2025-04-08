@@ -1,19 +1,11 @@
 package org.example.repository
 
-import com.mongodb.client.MongoCollection
-import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
 import org.bson.Document
 import org.bson.types.ObjectId
 import org.example.model.Entity
 
 class Repository<T extends Entity> {
-
-    protected MongoCollection<Document> collection
-
-    Repository(MongoDatabase database, String collectionName) {
-        this.collection = database.getCollection(collectionName)
-    }
 
     def insert(T entity) {
         try {
@@ -23,6 +15,7 @@ class Repository<T extends Entity> {
             return _id
         } catch (Exception e) {
             println "Error insert entity: ${e.message}"
+            e.printStackTrace()
         }
     }
 
@@ -30,9 +23,14 @@ class Repository<T extends Entity> {
         try {
             def filter = Filters.eq("_id", new ObjectId(id))
             def result = collection.find(filter).first()
+            if (result == null) {
+                println "No entity found with id: $id"
+                return null
+            }
             return result
         } catch (Exception e) {
             println "Error finding entity by id: ${e.message}"
         }
     }
+
 }
