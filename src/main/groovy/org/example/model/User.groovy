@@ -21,6 +21,7 @@ class User extends Entity {
         .append("password", this.password)
         .append("registerDate", this.registerDate)
         .append("exp", this.exp)
+
     }
 
     static def createUser(Document document) {

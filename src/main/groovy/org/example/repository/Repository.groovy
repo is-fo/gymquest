@@ -1,5 +1,6 @@
 package org.example.repository
 
+import com.mongodb.MongoException
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Updates
@@ -52,7 +53,7 @@ abstract class Repository<T extends Entity> {
         }
     }
 
-    //otestad
+
     def appendToArray(String id, String fieldName, Object value) {
         try {
             def filter = Filters.eq("_id", new ObjectId(id))
@@ -65,7 +66,12 @@ abstract class Repository<T extends Entity> {
             def result = collection.updateOne(filter, update)
             println "Matched: ${result.matchedCount}, Modified: ${result.modifiedCount}"
             return result.modifiedCount > 0
-        } catch (Exception e) {
+        }catch (MongoException e) {
+            println "MongoDB error appending to field: $fieldName on id $id: ${e.message}"
+            e.printStackTrace()
+            return false
+        }
+        catch (Exception e) {
             println "Error appending to field: $fieldName on id $id: ${e.message}"
             e.printStackTrace()
             return false
