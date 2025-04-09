@@ -52,4 +52,23 @@ abstract class Repository<T extends Entity> {
         }
     }
 
+    //otestad
+    def appendToArray(String id, String fieldName, Object value) {
+        try {
+            def filter = Filters.eq("_id", new ObjectId(id))
+            def update
+            if (value instanceof List) {
+                update = Updates.pushEach(fieldName, value)
+            } else {
+                update = Updates.push(fieldName, value)
+            }
+            def result = collection.updateOne(filter, update)
+            println "Matched: ${result.matchedCount}, Modified: ${result.modifiedCount}"
+            return result.modifiedCount > 0
+        } catch (Exception e) {
+            println "Error appending to field: $fieldName on id $id: ${e.message}"
+            e.printStackTrace()
+            return false
+        }
+    }
 }
