@@ -20,9 +20,13 @@ static void main(String[] args) {
 //    println userId
 
     def userHandler = new UserHandler()
-    userHandler.registerUser("Kalle", "mypassword")
+    //userHandler.registerUser("Kalle", "mypassword")
 //    userHandler.login("Kalle", "mypassword")
 //    UserRepository.getInstance().updateRow(userId, 'exp', 5)
+
+
+
+    userHandler.login("Kalle","mypassword2")
 
 
 
