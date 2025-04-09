@@ -26,7 +26,7 @@ static void main(String[] args) {
 
 
 
-    userHandler.login("Kalle","mypasswor2d")
+    userHandler.login("Kalle","mypassword2")
 
 
 

@@ -8,6 +8,7 @@ import org.mindrot.jbcrypt.BCrypt
 class UserHandler {
 
     UserRepository userRepository
+    def static final FIVEMINUTES = 5 * 60 * 1000
 
     UserHandler() {
         this.userRepository = UserRepository.getInstance()
@@ -30,55 +31,44 @@ class UserHandler {
             return
         }
         def userDoc = userRepository.findByUsername(username)
+        def id = userDoc.get("_id") as String
         if (userDoc != null) {
             String passwordHash = userDoc.get("password")
             if (BCrypt.checkpw(inputPassword, passwordHash)) {
-                userRepository.updateRow(userDoc.get("_id") as String, "loginAttempts", [])
+                userRepository.updateRow(id, "loginAttempts", [])
                 println "Lösenordet är korrekt!"
             } else {
                 println "Fel lösenord."
-                loginFailed(username)
+                loginFailed(id)
             }
         } else {
             println "Fel användarnamn."
         }
-
     }
 
     def lockUser(String id) {
         def now = new Date()
-        userRepository.updateRow(id, "lockedUntil", new Date(now.time + (5 * 60 * 1000)))
+        userRepository.updateRow(id, "lockedUntil", new Date(now.time + FIVEMINUTES))
     }
 
     def loginLocked(String username) {
         def userDoc = userRepository.findByUsername(username)
         def lockUntil = userDoc.get("lockedUntil") as Date
 
-        if (lockUntil != null && lockUntil.after(new Date())) {
-            return true
-        } else {
-            return false
-        }
+        return lockUntil != null && lockUntil.after(new Date())
     }
 
-    def loginFailed(String username) {
-        def userDoc = userRepository.findByUsername(username)
-        String id = userDoc.get("_id")
+    def loginFailed(String id) {
         userRepository.appendToArray(id, "loginAttempts", new Date())
-
+        def userDoc = userRepository.findById(id)
         def loginAttempts = userDoc.get("loginAttempts") as ArrayList
 
         if (loginAttempts.size() >= 3) {
-            //def thirdAttempt = loginAttempts[-3]
-            def thirdAttempt = loginAttempts.get(loginAttempts.size() - 3)
-            println thirdAttempt
-
+            def thirdAttempt = loginAttempts[-3]
             def now = new Date()
-
-            if (thirdAttempt > new Date(now.time - (5 * 60 * 1000))) {
+            if (thirdAttempt > new Date(now.time - FIVEMINUTES)) {
                 println "Fel lösenord, användare låst"
                 lockUser(id)
-
             } else {
                 println "Fel lösenord, försök igen      (i loginFailed())"
             }
