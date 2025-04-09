@@ -19,8 +19,9 @@ class UserHandler {
             throw new RuntimeException("Username already in use!")
         } else {
             String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt())
-            def user = new User(username, passwordHash, new Date(), 0)
+            def user = new User(username, new Date(), 0)
             def _id = userRepository.insert(user)
+            userRepository.updateRow(_id, "password", passwordHash)
             println "$user has been registred, id: $_id"
         }
     }
