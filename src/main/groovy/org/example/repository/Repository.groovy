@@ -2,6 +2,7 @@ package org.example.repository
 
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Updates
 import org.bson.Document
 import org.bson.types.ObjectId
 import org.example.model.Entity
@@ -33,6 +34,21 @@ abstract class Repository<T extends Entity> {
             return result
         } catch (Exception e) {
             println "Error finding entity by id: ${e.message}"
+        }
+    }
+
+    def updateRow(String id, String fieldName, Object newValue) {
+        try {
+            def filter = Filters.eq("_id", new ObjectId(id))
+            def update = Updates.set(fieldName, newValue)
+            def result = collection.updateOne(filter, update)
+
+            println "Matched: ${result.matchedCount}, Modified: ${result.modifiedCount}"
+            return result.modifiedCount > 0
+        } catch (Exception e) {
+            println "Error updating field: $fieldName on id $id: ${e.message}"
+            e.printStackTrace()
+            return false
         }
     }
 
