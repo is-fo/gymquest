@@ -16,11 +16,14 @@ static void main(String[] args) {
         }
     })
 
-    println User.createUser(UserRepository.getInstance().findByUsername("Kalle"))
+//    def userId = User.createUser(UserRepository.getInstance().findByUsername("Kalle"))._id
+//    println userId
 
     def userHandler = new UserHandler()
-    // skapa användare -> userHandler.registerUser("Kalle", "mypassword")
-    userHandler.login("Kalle", "mypassword")
+    userHandler.registerUser("Kalle", "mypassword")
+//    userHandler.login("Kalle", "mypassword")
+//    UserRepository.getInstance().updateRow(userId, 'exp', 5)
+
 
 
 }
