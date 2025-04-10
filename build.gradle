@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.javalin:javalin:6.1.3")
+    implementation("io.javalin:javalin:6.5.0")
 
     // MongoDB driver
     implementation 'org.mongodb:mongodb-driver-sync:4.11.0'

@@ -18,7 +18,7 @@ static void main(String[] args) {
     })
     //kommentera ut om ni inte vill att endpointen körs (programmet stängs aldrig av när den körs)
     //nås på localhost:8080/users/användarnamn t.ex Kalle
-//    UsersEndpoint.init()
+    UsersEndpoint.init()
 
 //    def userId = User.createUser(UserRepository.getInstance().findByUsername("Kalle"))._id
 //    println userId
