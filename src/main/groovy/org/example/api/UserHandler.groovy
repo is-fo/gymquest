@@ -1,17 +1,23 @@
 package org.example.api
 
-
+import io.javalin.util.ReflectionUtilKt
 import org.example.model.User
 import org.example.repository.UserRepository
 import org.mindrot.jbcrypt.BCrypt
 
 class UserHandler {
 
+    static final UserHandler instance = new UserHandler()
+
     UserRepository userRepository
     def static final FIVEMINUTES = 5 * 60 * 1000
 
-    UserHandler() {
+    private UserHandler() {
         this.userRepository = UserRepository.getInstance()
+    }
+
+    static UserHandler getInstance() {
+        return instance
     }
 
     def registerUser(String username, String password) {
@@ -29,7 +35,7 @@ class UserHandler {
     def login(String username, String inputPassword) {
         if (loginLocked(username)) {
             println "Det gick inte att logga in, för många misslyckade försök."
-            return
+            return "Låst i $FIVEMINUTES millisekunder" as String
         }
         def userDoc = userRepository.findByUsername(username)
         def id = userDoc.get("_id") as String
@@ -38,12 +44,15 @@ class UserHandler {
             if (BCrypt.checkpw(inputPassword, passwordHash)) {
                 userRepository.updateRow(id, "loginAttempts", [])
                 println "Lösenordet är korrekt!"
+                return TokenUtil.generateToken(username)
             } else {
                 println "Fel lösenord."
                 loginFailed(id)
+                return "Fel lösenord."
             }
         } else {
-            println "Fel användarnamn."
+            println "Fel användarnamn"
+            return "Fel användarnamn"
         }
     }
 

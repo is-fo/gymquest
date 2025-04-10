@@ -17,16 +17,27 @@ class UsersEndpoint {
     static def init() {
         def app = Javalin.create().start(8080)
 
-        app.get("/user/{username}") { ctx -> {
-            def username = ctx.pathParam("username")
+        app.get("/user/{username}") {
+            def username = it.pathParam("username")
             def user = User.createUser(UserRepository.getInstance().findByUsername(username))
 
             if (user != null) {
                 def jsonResponse = JsonOutput.toJson(user)
-                ctx.contentType("application/json").result(jsonResponse)
+                it.contentType("application/json").result(jsonResponse)
             } else {
-                ctx.status(404).result("User not found")
+                it.status(404).result("User not found")
             }
-        }}
+        }
+
+        app.post("/login") {
+            def body = it.bodyAsClass(Map)
+            println body.toString()
+            def username = body.username
+            def password = body.password
+
+            def result = UserHandler.getInstance().login(username as String, password as String)
+
+            it.json([status: "ok", token: result ])
+        }
     }
 }
