@@ -3,14 +3,15 @@ package org.example.api
 import groovy.json.JsonOutput
 import io.javalin.Javalin
 import org.example.model.User
+import org.example.repository.ExerciseRepository
 import org.example.repository.UserRepository
 
-class UsersEndpoint {
-    static final instance = new UsersEndpoint()
+class Endpoint {
+    static final instance = new Endpoint()
 
-    private UsersEndpoint() {}
+    private Endpoint() {}
 
-    static UsersEndpoint getInstance() {
+    static Endpoint getInstance() {
         return instance
     }
 
@@ -49,6 +50,22 @@ class UsersEndpoint {
             def result = UserHandler.getInstance().registerUser(username as String, password as String)
 
             it.json([status: "ok", token: result])
+        }
+
+        app.post("/exercises") {
+            def body = it.bodyAsClass(Map)
+            def category = body.category
+            def name = body.name
+            def description = body.description
+            def equipment = body.equipment
+
+            def result = ExerciseRepository.getInstance()
+                    .insertExercise(category as String,
+                            name as String,
+                            description as String,
+                            equipment as ArrayList<String>)
+
+            it.json([result: result])
         }
     }
 }

@@ -1,6 +1,6 @@
 package org.example.model
 
-abstract sealed class Entity permits User {
+abstract sealed class Entity permits User, Exercise {
     String _id
 
     Entity(String _id) {
