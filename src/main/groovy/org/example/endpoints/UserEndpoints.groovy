@@ -1,23 +1,13 @@
-package org.example.api
+package org.example.endpoints
 
 import groovy.json.JsonOutput
 import io.javalin.Javalin
+import org.example.api.UserHandler
 import org.example.model.User
-import org.example.repository.ExerciseRepository
 import org.example.repository.UserRepository
 
-class Endpoint {
-    static final instance = new Endpoint()
-
-    private Endpoint() {}
-
-    static Endpoint getInstance() {
-        return instance
-    }
-
-    static def init() {
-        def app = Javalin.create().start(8080)
-
+class UserEndpoints {
+    static void endpoints(Javalin app) {
         app.get("/user/{username}") {
             def username = it.pathParam("username")
             def user = User.createUser(UserRepository.getInstance().findByUsername(username))
@@ -50,22 +40,6 @@ class Endpoint {
             def result = UserHandler.getInstance().registerUser(username as String, password as String)
 
             it.json([status: "ok", token: result])
-        }
-
-        app.post("/exercises") {
-            def body = it.bodyAsClass(Map)
-            def category = body.category
-            def name = body.name
-            def description = body.description
-            def equipment = body.equipment
-
-            def result = ExerciseRepository.getInstance()
-                    .insertExercise(category as String,
-                            name as String,
-                            description as String,
-                            equipment as ArrayList<String>)
-
-            it.json([result: result])
         }
     }
 }
