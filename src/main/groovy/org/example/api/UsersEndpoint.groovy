@@ -39,5 +39,16 @@ class UsersEndpoint {
 
             it.json([status: "ok", token: result ])
         }
+
+        app.post("/register") {
+            def body = it.bodyAsClass(Map)
+
+            def username = body.username
+            def password = body.password
+
+            def result = UserHandler.getInstance().registerUser(username as String, password as String)
+
+            it.json([status: "ok", token: result])
+        }
     }
 }

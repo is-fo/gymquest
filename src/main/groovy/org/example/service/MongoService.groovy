@@ -7,9 +7,12 @@ import com.mongodb.ServerApi
 import com.mongodb.ServerApiVersion
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.IndexOptions
 import org.bson.BsonDocument
 import org.bson.BsonInt64
+import org.bson.Document
 import org.bson.conversions.Bson
 
 class MongoService {
@@ -43,7 +46,7 @@ class MongoService {
                 println 'Connection successful!'
 
 //                MongoCollection<Document> usersCollection = database.getCollection("users")
-//                usersCollection.createIndex(new Document("user", 1), new IndexOptions().unique(true))
+//                usersCollection.createIndex(new Document("username", 1), new IndexOptions().unique(true))
 //                println 'Unique index created on \'username\' in \'users\' collection.'
             } catch (MongoException me) {
                 System.err.println(me)

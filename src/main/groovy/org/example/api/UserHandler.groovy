@@ -1,6 +1,5 @@
 package org.example.api
 
-import io.javalin.util.ReflectionUtilKt
 import org.example.model.User
 import org.example.repository.UserRepository
 import org.mindrot.jbcrypt.BCrypt
@@ -22,13 +21,17 @@ class UserHandler {
 
     def registerUser(String username, String password) {
         if (userRepository.findByUsername(username)) {
-            throw new RuntimeException("Username already in use!")
+            return "Username already in use!"
         } else {
             String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt())
             def user = new User(username, new Date(), 0)
             def _id = userRepository.insert(user)
+            if (_id == null) {
+                return "ERROR INSERTING USER"
+            }
             userRepository.updateRow(_id, "password", passwordHash)
             println "$user has been registred, id: $_id"
+            return TokenUtil.generateToken(username)
         }
     }
 
