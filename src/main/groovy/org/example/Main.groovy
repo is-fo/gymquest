@@ -1,6 +1,6 @@
 package org.example
 
-import org.example.api.Endpoint
+import org.example.endpoints.Endpoint
 import org.example.service.MongoService
 
 static void main(String[] args) {
