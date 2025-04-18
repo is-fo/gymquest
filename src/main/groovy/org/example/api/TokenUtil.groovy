@@ -18,10 +18,23 @@ class TokenUtil {
 
     static String getUsername(String token) {
         return Jwts.parserBuilder()
-        .setSigningKey(token)
-        .build()
-        .parseClaimsJws(token)
-        .getBody()
-        .getSubject()
+            .setSigningKey(SECRET)
+            .build()
+            .parseClaimsJws(token)
+            .getBody()
+            .getSubject()
+    }
+
+    static boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                .setSigningKey(SECRET)
+                .build()
+                .parseClaimsJws(token)
+
+            return true
+        } catch (Exception ignored) {
+            return false
+        }
     }
 }

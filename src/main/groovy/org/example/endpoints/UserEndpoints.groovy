@@ -2,6 +2,7 @@ package org.example.endpoints
 
 import groovy.json.JsonOutput
 import io.javalin.Javalin
+import org.example.api.TokenUtil
 import org.example.api.UserHandler
 import org.example.model.User
 import org.example.repository.UserRepository
@@ -22,7 +23,6 @@ class UserEndpoints {
 
         app.post("/login") {
             def body = it.bodyAsClass(Map)
-            println body.toString()
             def username = body.username
             def password = body.password
 
@@ -41,5 +41,34 @@ class UserEndpoints {
 
             it.json([status: "ok", token: result])
         }
+
+        /**
+         * https://jwt.io/introduction
+         */
+
+        app.get("/test") {
+            def token = extractBearerToken(it)
+
+            if (!TokenUtil.validateToken(token)) {
+                it.status(401).result("Invalid or expired token")
+                return
+            }
+
+            def username = TokenUtil.getUsername(token)
+            it.result("Hello ${username}! You have a valid token!")
+        }
+    }
+
+    //util metod, kanske flytta
+    static String extractBearerToken(it) {
+        def authHeader = it.header("Authorization")
+
+        // authHeader kan vara null (jag har testat) och då får man 401 tillbaka i Postman
+        if (!authHeader?.startsWith("Bearer ")) {
+            it.status(401).result("Missing or malformed Auth header")
+            return null
+        }
+
+        return authHeader.replace("Bearer ", "")
     }
 }
