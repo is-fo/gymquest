@@ -24,22 +24,19 @@ class ExerciseEndpoints {
             CategoryRepository.getInstance().populateCategories()
         }
 
-        app.get("/exercises") {
+        app.get("/exercises/{category}") {
+            def category = it.pathParam("category")
             def limit = it.queryParam("limit")?.toInteger()
-            def docs = ExerciseRepository.getInstance().getDocuments(limit)
-            def list = []
-            docs.forEach { list << it }
+            def docs = ExerciseRepository.getInstance().findByCategory(category, limit)
 
-            it.json([exercises: list])
+            it.json([exercises: docs])
         }
 
         app.get("/categories") {
             def limit = it.queryParam("limit")?.toInteger()
             def docs = CategoryRepository.getInstance().getDocuments(limit) //om limit är null hanteras det i getDocuments()
-            def list = []
-            docs.forEach { list << it } //den här hanteringen kanske ska ligga i getDocuments() istället
 
-            it.json([categories: list])
+            it.json([categories: docs])
         }
 
     }

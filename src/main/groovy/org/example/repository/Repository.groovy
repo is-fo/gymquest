@@ -82,7 +82,9 @@ abstract class Repository<T extends Entity> {
         try {
             def results =
                     (limit && limit > 0) ? collection.find().limit(limit) : collection.find()
-            return results
+            def list = []
+            results.forEach { list << it }
+            return list
         } catch (MongoException e) {
             println "MongoDB Error getting documents from ${collection.getNamespace().collectionName}: ${e.getMessage()}"
             e.printStackTrace()
