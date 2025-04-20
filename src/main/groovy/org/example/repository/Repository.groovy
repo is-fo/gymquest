@@ -77,4 +77,18 @@ abstract class Repository<T extends Entity> {
             return false
         }
     }
+
+    def getDocuments(Integer limit) {
+        try {
+            def results =
+                    (limit && limit > 0) ? collection.find().limit(limit) : collection.find()
+            return results
+        } catch (MongoException e) {
+            println "MongoDB Error getting documents from ${collection.getNamespace().collectionName}: ${e.getMessage()}"
+            e.printStackTrace()
+        } catch (Exception e) {
+            println "Error getting documents from ${collection.getNamespace().collectionName}: ${e.getMessage()}"
+            e.printStackTrace()
+        }
+    }
 }

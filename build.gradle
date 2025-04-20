@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     implementation("io.javalin:javalin:6.5.0")
+    implementation("org.slf4j:slf4j-simple:2.0.16") //orkade inte med varningen
 
     // MongoDB driver
     implementation 'org.mongodb:mongodb-driver-sync:4.11.0'

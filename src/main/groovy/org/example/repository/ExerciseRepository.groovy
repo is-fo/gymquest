@@ -17,6 +17,6 @@ class ExerciseRepository extends Repository {
 
     def insertExercise(String category, String name, String description, List<String> equipment) {
         def result = insert(new Exercise(category, name, description, equipment))
-        return result != null ? "Successfully inserted $category $name" as String : "Failed inserting $category $name" as String
+        return result != null ? "Successfully inserted $category, $name" as String : "Failed inserting $category, $name" as String
     }
 }
