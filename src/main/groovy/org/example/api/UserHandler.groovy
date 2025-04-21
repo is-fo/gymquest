@@ -9,18 +9,18 @@ class UserHandler {
 
     static final UserHandler instance = new UserHandler()
 
-    UserRepository userRepository
-    def static final FIVEMINUTES = 5 * 60 * 1000
+    def static final FIVE_MINUTES = 5 * 60 * 1000
 
     private UserHandler() {
-        this.userRepository = UserRepository.getInstance()
+
     }
 
     static UserHandler getInstance() {
         return instance
     }
 
-    def registerUser(String username, String password) {
+    static def registerUser(String username, String password) {
+        def userRepository = UserRepository.getInstance()
         if (userRepository.findByUsername(username)) {
             return "Username already in use!"
         } else {
@@ -36,10 +36,11 @@ class UserHandler {
         }
     }
 
-    def login(String username, String inputPassword) {
+    static def login(String username, String inputPassword) {
+        def userRepository = UserRepository.getInstance()
         if (loginLocked(username)) {
             println "Det gick inte att logga in, för många misslyckade försök."
-            return "Låst i $FIVEMINUTES millisekunder" as String
+            return "Låst i $FIVE_MINUTES millisekunder" as String
         }
         def userDoc = userRepository.findByUsername(username)
         def id = userDoc.get("_id") as String
@@ -60,19 +61,20 @@ class UserHandler {
         }
     }
 
-    def lockUser(String id) {
+    static def lockUser(String id) {
         def now = new Date()
-        userRepository.updateRow(id, "lockedUntil", new Date(now.time + FIVEMINUTES))
+        UserRepository.getInstance().updateRow(id, "lockedUntil", new Date(now.time + FIVE_MINUTES))
     }
 
-    def loginLocked(String username) {
-        def userDoc = userRepository.findByUsername(username)
+    static def loginLocked(String username) {
+        def userDoc = UserRepository.getInstance().findByUsername(username)
         def lockUntil = userDoc.get("lockedUntil") as Date
 
         return lockUntil != null && lockUntil.after(new Date())
     }
 
-    def loginFailed(String id) {
+    static def loginFailed(String id) {
+        def userRepository = UserRepository.getInstance()
         userRepository.appendToArray(id, "loginAttempts", new Date())
         def userDoc = userRepository.findById(id)
         def loginAttempts = userDoc.get("loginAttempts") as ArrayList
@@ -80,7 +82,7 @@ class UserHandler {
         if (loginAttempts.size() >= 3) {
             def thirdAttempt = loginAttempts[-3]
             def now = new Date()
-            if (thirdAttempt > new Date(now.time - FIVEMINUTES)) {
+            if (thirdAttempt > new Date(now.time - FIVE_MINUTES)) {
                 println "Fel lösenord, användare låst"
                 lockUser(id)
             } else {
