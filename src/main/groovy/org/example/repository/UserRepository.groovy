@@ -30,4 +30,8 @@ class UserRepository extends Repository {
         }
     }
 
+    def increaseExp(String _id, Integer exp) {
+        updateRow(_id, "exp", this.findById(_id).get("exp") as Integer + exp)
+    }
+
 }
