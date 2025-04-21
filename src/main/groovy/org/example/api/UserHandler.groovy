@@ -2,6 +2,7 @@ package org.example.api
 
 import org.example.model.User
 import org.example.repository.UserRepository
+import org.example.util.TokenUtil
 import org.mindrot.jbcrypt.BCrypt
 
 class UserHandler {

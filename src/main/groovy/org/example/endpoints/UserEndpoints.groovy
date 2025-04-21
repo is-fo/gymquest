@@ -2,7 +2,7 @@ package org.example.endpoints
 
 import groovy.json.JsonOutput
 import io.javalin.Javalin
-import org.example.api.TokenUtil
+import org.example.util.TokenUtil
 import org.example.api.UserHandler
 import org.example.model.User
 import org.example.repository.UserRepository
@@ -47,7 +47,7 @@ class UserEndpoints {
          */
 
         app.get("/test") {
-            def token = extractBearerToken(it)
+            def token = TokenUtil.extractBearerToken(it)
 
             if (!TokenUtil.validateToken(token)) {
                 it.status(401).result("Invalid or expired token")
@@ -57,18 +57,5 @@ class UserEndpoints {
             def username = TokenUtil.getUsername(token)
             it.result("Hello ${username}! You have a valid token!")
         }
-    }
-
-    //util metod, kanske flytta
-    static String extractBearerToken(it) {
-        def authHeader = it.header("Authorization")
-
-        // authHeader kan vara null (jag har testat) och då får man 401 tillbaka i Postman
-        if (!authHeader?.startsWith("Bearer ")) {
-            it.status(401).result("Missing or malformed Auth header")
-            return null
-        }
-
-        return authHeader.replace("Bearer ", "")
     }
 }

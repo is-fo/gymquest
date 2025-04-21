@@ -1,5 +1,6 @@
-package org.example.api
+package org.example.util
 
+import io.javalin.http.Context
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
@@ -36,5 +37,18 @@ class TokenUtil {
         } catch (Exception ignored) {
             return false
         }
+    }
+
+    // https://jwt.io/introduction
+    static String extractBearerToken(Context it) {
+        def authHeader = it.header("Authorization")
+
+        // authHeader kan vara null (jag har testat) och då får man 401 tillbaka i Postman
+        if (!authHeader?.startsWith("Bearer ")) {
+            it.status(401).result("Missing or malformed Auth header")
+            return null
+        }
+
+        return authHeader.replace("Bearer ", "")
     }
 }
