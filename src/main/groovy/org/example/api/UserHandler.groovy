@@ -1,5 +1,6 @@
 package org.example.api
 
+import org.bson.Document
 import org.example.model.User
 import org.example.repository.UserRepository
 import org.example.util.TokenUtil
@@ -38,26 +39,24 @@ class UserHandler {
 
     static def login(String username, String inputPassword) {
         def userRepository = UserRepository.getInstance()
-        if (loginLocked(username)) {
+        def userDoc = userRepository.findByUsername(username)
+        if (!userDoc) {
+            return "Fel användarnamn"
+        }
+        if (loginLocked(userDoc)) {
             println "Det gick inte att logga in, för många misslyckade försök."
             return "Låst i $FIVE_MINUTES millisekunder" as String
         }
-        def userDoc = userRepository.findByUsername(username)
         def id = userDoc.get("_id") as String
-        if (userDoc != null) {
-            String passwordHash = userDoc.get("password")
-            if (BCrypt.checkpw(inputPassword, passwordHash)) {
-                userRepository.updateRow(id, "loginAttempts", [])
-                println "Lösenordet är korrekt!"
-                return TokenUtil.generateToken(username)
-            } else {
-                println "Fel lösenord."
-                loginFailed(id)
-                return "Fel lösenord."
-            }
+        String passwordHash = userDoc.get("password")
+        if (BCrypt.checkpw(inputPassword, passwordHash)) {
+            userRepository.updateRow(id, "loginAttempts", [])
+            println "Lösenordet är korrekt!"
+            return TokenUtil.generateToken(username)
         } else {
-            println "Fel användarnamn"
-            return "Fel användarnamn"
+            println "Fel lösenord."
+            loginFailed(id)
+            return "Fel lösenord."
         }
     }
 
@@ -66,8 +65,7 @@ class UserHandler {
         UserRepository.getInstance().updateRow(id, "lockedUntil", new Date(now.time + FIVE_MINUTES))
     }
 
-    static def loginLocked(String username) {
-        def userDoc = UserRepository.getInstance().findByUsername(username)
+    static def loginLocked(Document userDoc) {
         def lockUntil = userDoc.get("lockedUntil") as Date
 
         return lockUntil != null && lockUntil.after(new Date())
