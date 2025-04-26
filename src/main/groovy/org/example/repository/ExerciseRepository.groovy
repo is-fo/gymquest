@@ -2,6 +2,7 @@ package org.example.repository
 
 import com.mongodb.MongoException
 import com.mongodb.client.model.Filters
+import org.bson.Document
 import org.example.model.Exercise
 import org.example.service.MongoService
 
@@ -37,5 +38,21 @@ class ExerciseRepository extends Repository {
             println "Error finding entity by category ${category}: ${e.message}"
             e.printStackTrace()
         }
+    }
+
+    def findByName(String name) {
+        try {
+            def filter = Filters.eq("name", name)
+            def result = collection.find(filter).first()
+            return result
+        } catch (MongoException e) {
+            e.printStackTrace()
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+    }
+
+    List<Document> findByNames(List<String> names) {
+        return names.collect { this.findByName(it) }.findAll() { it != null }
     }
 }

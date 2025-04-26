@@ -24,6 +24,11 @@ abstract class Repository<T extends Entity> {
         }
     }
 
+    def insertDoc(Document document) {
+        //TODO: felhantering
+        return collection.insertOne(document)
+    }
+
     def findById(String id) {
         try {
             def filter = Filters.eq("_id", new ObjectId(id))

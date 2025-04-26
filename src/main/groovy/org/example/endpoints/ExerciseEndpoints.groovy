@@ -1,8 +1,10 @@
 package org.example.endpoints
 
 import io.javalin.Javalin
+import org.bson.Document
 import org.example.repository.CategoryRepository
 import org.example.repository.ExerciseRepository
+import org.example.repository.WorkoutPlanRepository
 
 class ExerciseEndpoints {
     static endpoints(Javalin app) {
@@ -37,6 +39,42 @@ class ExerciseEndpoints {
             def docs = CategoryRepository.getInstance().getDocuments(limit) //om limit är null hanteras det i getDocuments()
 
             it.json([categories: docs])
+        }
+
+        app.post("/workout") {
+            def body = it.bodyAsClass(Map)
+
+            def name = body.name
+            def exerciseNames = body.exercises
+
+            if (!(name instanceof String) || name.trim().isEmpty()) {
+                it.status(400).result("Invalid or missing 'name'")
+                return
+            }
+
+            if (!(exerciseNames instanceof List) || exerciseNames.isEmpty() || !exerciseNames.every { it instanceof String && !it.trim().isEmpty() }) {
+                it.status(400).result("Invalid or missing 'exercises'")
+            }
+
+            exerciseNames = exerciseNames as List<String>
+
+            def foundExercises = ExerciseRepository.getInstance().findByNames(exerciseNames)
+            if (foundExercises.size() < exerciseNames.size()) {
+                it.status(400).result("One or more exercises in input not in database")
+                return
+            }
+            Document workoutDoc = [
+                    name: name,
+                    exercises: foundExercises.withIndex().collect(
+                            (exercise, idx) ->
+                        [
+                                exerciseId: exercise._id,
+                                order: idx + 1,
+                        ]
+                    )
+            ]
+            WorkoutPlanRepository.getInstance().insertDoc(workoutDoc)
+            it.status(201).result("Workout plan created")
         }
 
     }

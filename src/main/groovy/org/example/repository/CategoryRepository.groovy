@@ -17,12 +17,12 @@ class CategoryRepository extends Repository{
     }
 
     def populateCategories() {
-        println("Populating category-collection")
         def categories = ExerciseRepository.getInstance().collection.distinct("category", String).into([])
 
         categories.each {
             if (!collection.find(Filters.eq("name", it)).first()) {
                 collection.insertOne(new Document("name", it))
+                println "Added $it to categories-collection"
             }
         }
     }
