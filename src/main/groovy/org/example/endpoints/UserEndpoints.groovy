@@ -1,7 +1,9 @@
 package org.example.endpoints
 
+import com.mongodb.client.model.Sorts
 import groovy.json.JsonOutput
 import io.javalin.Javalin
+import org.bson.Document
 import org.example.util.TokenUtil
 import org.example.api.UserHandler
 import org.example.model.User
@@ -26,18 +28,20 @@ class UserEndpoints {
             def username = body.username
             def password = body.password
 
-            def result = UserHandler.getInstance().login(username as String, password as String)
+            //kanske lägga in innan här o kolla om användaren är låst, och returna en specialare så att man vet det
+            def success = UserHandler.getInstance().login(username as String, password as String)
+            def result = success ? TokenUtil.generateToken(username as String) : "Login failed"
 
             it.json([status: "ok", token: result ])
         }
 
         app.post("/register") {
             def body = it.bodyAsClass(Map)
-
             def username = body.username
             def password = body.password
 
-            def result = UserHandler.getInstance().registerUser(username as String, password as String)
+            def success = UserHandler.getInstance().registerUser(username as String, password as String)
+            def result = success ? TokenUtil.generateToken(username as String) : "Register failed."
 
             it.json([status: "ok", token: result])
         }
@@ -56,6 +60,32 @@ class UserEndpoints {
 
             def username = TokenUtil.getUsername(token)
             it.result("Hello ${username}! You have a valid token!")
+        }
+
+        app.get("/top/{limit}") {
+            def limitStr = it.pathParam("limit")
+            int limit
+            try {
+                limit = Integer.parseInt(limitStr)
+                if (limit <= 0) throw new NumberFormatException()
+            } catch (NumberFormatException e) {
+                it.status(400).result("Path param: \"limit\" must be a positive integer")
+                return
+            }
+
+            def projection = new Document("username", 1)
+                    .append("exp", 1)
+                    .append("_id", 0)
+
+            def result = UserRepository.getInstance()
+                    .collection
+                    .find()
+                    .sort(Sorts.descending("exp"))
+                    .limit(limit)
+                    .projection(projection)
+                    .into([])
+
+            it.json(result)
         }
     }
 }

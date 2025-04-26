@@ -27,7 +27,7 @@ class ExerciseEndpoints {
         app.get("/exercises/{category}") {
             def category = it.pathParam("category")
             def limit = it.queryParam("limit")?.toInteger()
-            def docs = ExerciseRepository.getInstance().findByCategory(category, limit)
+            def docs = ExerciseRepository.getInstance().groupByCategory(category, limit)
 
             it.json([exercises: docs])
         }

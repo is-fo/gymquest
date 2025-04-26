@@ -22,7 +22,7 @@ class ExerciseRepository extends Repository {
         return result != null ? "Successfully inserted $category, $name" as String : "Failed inserting $category, $name" as String
     }
 
-    def findByCategory(String category, Integer limit) {
+    def groupByCategory(String category, Integer limit) {
         try {
             def filter = Filters.eq("category", category)
             def results =
