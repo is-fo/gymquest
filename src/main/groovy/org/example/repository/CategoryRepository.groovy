@@ -1,10 +1,10 @@
 package org.example.repository
 
-import com.mongodb.client.model.Filters
+
 import org.bson.Document
 import org.example.service.MongoService
 
-class CategoryRepository extends Repository{
+class CategoryRepository extends Repository {
 
     static final instance = new CategoryRepository()
 

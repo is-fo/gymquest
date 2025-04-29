@@ -16,8 +16,8 @@ class User extends Entity {
 
     def createDocument() {
         return new Document("username", this.username)
-        .append("registerDate", this.registerDate)
-        .append("exp", this.exp)
+                .append("registerDate", this.registerDate)
+                .append("exp", this.exp)
 
     }
 

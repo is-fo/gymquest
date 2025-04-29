@@ -36,7 +36,8 @@ class ExerciseEndpoints {
 
         app.get("/categories") {
             def limit = it.queryParam("limit")?.toInteger()
-            def docs = CategoryRepository.getInstance().getDocuments(limit) //om limit är null hanteras det i getDocuments()
+            def docs = CategoryRepository.getInstance().getDocuments(limit)
+            //om limit är null hanteras det i getDocuments()
 
             it.json([categories: docs])
         }
@@ -64,13 +65,13 @@ class ExerciseEndpoints {
                 return
             }
             Document workoutDoc = [
-                    name: name,
+                    name     : name,
                     exercises: foundExercises.withIndex().collect(
                             (exercise, idx) ->
-                        [
-                                exerciseId: exercise._id,
-                                order: idx + 1,
-                        ]
+                                    [
+                                            exerciseId: exercise._id,
+                                            order     : idx + 1,
+                                    ]
                     )
             ]
             WorkoutPlanRepository.getInstance().insertDoc(workoutDoc)

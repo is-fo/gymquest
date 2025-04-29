@@ -16,41 +16,22 @@ class WorkoutsRepository extends Repository {
     }
 
     def createWorkout(String userId) {
-        def doc = [
-                userId: new ObjectId(userId),
-                timestamp: new Date(),
-                exercises: []
-        ] as Document
-        insertDoc(doc)
-        return doc._id
+        return insertDoc([userId   : new ObjectId(userId),
+                          timestamp: new Date(),
+                          exercises: []] as Document)
     }
 
     def addExercise(String workoutId, String exerciseId) {
-        def exercise = [
-                exerciseId: new ObjectId(exerciseId),
-                sets: []
-        ] as Document
-        appendToArray(workoutId, "exercises", exercise)
+        return appendToArray(workoutId, "exercises",
+                [exerciseId: new ObjectId(exerciseId),
+                 sets      : []] as Document)
     }
 
     def logSet(String workoutId, String exerciseId, Integer reps, Integer weight) {
-        def success = pushToNestedArray(
-                workoutId,
-                "exercises",
-                "exerciseId",
-                exerciseId,
-                [reps: reps, weight: weight]
-        )
-        if (!success) {
+        if (!pushToNestedArray(workoutId, "exercises", "exerciseId", exerciseId, [reps: reps, weight: weight])) {
             println "Exercise not found, adding it..."
             addExercise(workoutId, exerciseId)
-            pushToNestedArray(
-                    workoutId,
-                    "exercises",
-                    "exerciseId",
-                    exerciseId,
-                    [reps: reps, weight: weight]
-            )
+            pushToNestedArray(workoutId, "exercises", "exerciseId", exerciseId, [reps: reps, weight: weight])
         }
     }
 }

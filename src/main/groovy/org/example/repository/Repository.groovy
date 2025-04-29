@@ -7,8 +7,6 @@ import org.bson.Document
 import org.bson.types.ObjectId
 import org.example.model.Entity
 
-import java.nio.ByteBuffer
-
 abstract class Repository<T extends Entity> {
 
     abstract MongoCollection<Document> collection
@@ -57,7 +55,7 @@ abstract class Repository<T extends Entity> {
         try {
             def filter = Filters.eq(field, value)
             return collection.find(filter).first()
-        } catch (Exception e ) {
+        } catch (Exception e) {
             println "Error finding by $field = $value: ${e.message}"
             e.printStackTrace()
             return null
@@ -104,8 +102,8 @@ abstract class Repository<T extends Entity> {
         try {
             def matchValueObjId = matchValue instanceof ObjectId ? matchValue : new ObjectId(matchValue.toString())
             def filter = Filters.and(
-            Filters.eq("_id", new ObjectId(id)),
-            Filters.elemMatch(arrayField, Filters.eq(matchField, matchValueObjId))
+                    Filters.eq("_id", new ObjectId(id)),
+                    Filters.elemMatch(arrayField, Filters.eq(matchField, matchValueObjId))
             )
             def update = Updates.push("${arrayField}.\$.sets", new Document(pushData))
             def result = collection.updateOne(filter, update)

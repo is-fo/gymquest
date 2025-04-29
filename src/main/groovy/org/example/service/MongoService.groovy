@@ -1,18 +1,11 @@
 package org.example.service
 
-import com.mongodb.ConnectionString
-import com.mongodb.MongoClientSettings
-import com.mongodb.MongoException
-import com.mongodb.ServerApi
-import com.mongodb.ServerApiVersion
+import com.mongodb.*
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
-import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
-import com.mongodb.client.model.IndexOptions
 import org.bson.BsonDocument
 import org.bson.BsonInt64
-import org.bson.Document
 import org.bson.conversions.Bson
 
 class MongoService {
@@ -28,15 +21,15 @@ class MongoService {
         def uri = props.getProperty("CONNECTION_STRING")
 
         if (mongoClient == null) {
-            ServerApi serverApi = ServerApi.builder()
+            ServerApi.builder()
                     .version(ServerApiVersion.V1)
                     .build()
 
             try {
                 MongoClient mongoClient = MongoClients.create(
-                    MongoClientSettings.builder()
-                            .applyConnectionString(new ConnectionString(uri))
-                            .build())
+                        MongoClientSettings.builder()
+                                .applyConnectionString(new ConnectionString(uri))
+                                .build())
 
                 database = mongoClient.getDatabase("gymquest")
                 println 'Connected to database: gymquest'

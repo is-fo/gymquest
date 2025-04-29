@@ -4,10 +4,10 @@ import com.mongodb.client.model.Sorts
 import groovy.json.JsonOutput
 import io.javalin.Javalin
 import org.bson.Document
-import org.example.util.TokenUtil
 import org.example.api.UserHandler
 import org.example.model.User
 import org.example.repository.UserRepository
+import org.example.util.TokenUtil
 
 class UserEndpoints {
     static void endpoints(Javalin app) {
@@ -32,7 +32,7 @@ class UserEndpoints {
             def success = UserHandler.getInstance().login(username as String, password as String)
             def result = success ? TokenUtil.generateToken(username as String) : "Login failed"
 
-            it.json([status: "ok", token: result ])
+            it.json([status: "ok", token: result])
         }
 
         app.post("/register") {
@@ -68,7 +68,7 @@ class UserEndpoints {
             try {
                 limit = Integer.parseInt(limitStr)
                 if (limit <= 0) throw new NumberFormatException()
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 it.status(400).result("Path param: \"limit\" must be a positive integer")
                 return
             }

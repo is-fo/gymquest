@@ -1,7 +1,6 @@
 package org.example
 
-import org.example.endpoints.Endpoint
-import org.example.repository.CategoryRepository
+
 import org.example.repository.ExerciseRepository
 import org.example.repository.UserRepository
 import org.example.repository.WorkoutsRepository
