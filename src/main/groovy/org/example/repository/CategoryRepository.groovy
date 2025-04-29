@@ -20,7 +20,7 @@ class CategoryRepository extends Repository{
         def categories = ExerciseRepository.getInstance().collection.distinct("category", String).into([])
 
         categories.each {
-            if (!collection.find(Filters.eq("name", it)).first()) {
+            if (findByField("name", it)) {
                 collection.insertOne(new Document("name", it))
                 println "Added $it to categories-collection"
             }

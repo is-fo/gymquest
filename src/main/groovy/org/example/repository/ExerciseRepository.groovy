@@ -41,15 +41,7 @@ class ExerciseRepository extends Repository {
     }
 
     def findByName(String name) {
-        try {
-            def filter = Filters.eq("name", name)
-            def result = collection.find(filter).first()
-            return result
-        } catch (MongoException e) {
-            e.printStackTrace()
-        } catch (Exception e) {
-            e.printStackTrace()
-        }
+        findByField("name", name)
     }
 
     List<Document> findByNames(List<String> names) {
