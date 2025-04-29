@@ -19,7 +19,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.16") //orkade inte med varningen
 
     // MongoDB driver
-    implementation 'org.mongodb:mongodb-driver-sync:4.11.0'
+    implementation 'org.mongodb:mongodb-driver-sync:5.4.0'
 
     // Password Encryption
     implementation 'org.mindrot:jbcrypt:0.4'
