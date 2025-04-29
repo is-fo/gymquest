@@ -29,7 +29,7 @@ class ExerciseRepository extends Repository {
             def results =
                     (limit && limit > 0) ? collection.find(filter).limit(limit) : collection.find(filter)
             def list = []
-            results.forEach {list << it}
+            results.forEach { list << it }
             return list
         } catch (MongoException e) {
             println "MongoDB Error finding entity by category ${category}: ${e.message}"
@@ -41,15 +41,7 @@ class ExerciseRepository extends Repository {
     }
 
     def findByName(String name) {
-        try {
-            def filter = Filters.eq("name", name)
-            def result = collection.find(filter).first()
-            return result
-        } catch (MongoException e) {
-            e.printStackTrace()
-        } catch (Exception e) {
-            e.printStackTrace()
-        }
+        findByField("name", name)
     }
 
     List<Document> findByNames(List<String> names) {

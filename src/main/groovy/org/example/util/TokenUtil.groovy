@@ -10,28 +10,28 @@ class TokenUtil {
 
     static String generateToken(String username) {
         return Jwts.builder()
-        .setSubject(username)
-        .setIssuedAt(new Date())
-        .setExpiration(new Date(System.currentTimeMillis() + 3600000))
-        .signWith(SECRET)
-        .compact()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+                .signWith(SECRET)
+                .compact()
     }
 
     static String getUsername(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(SECRET)
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .getSubject()
+                .setSigningKey(SECRET)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject()
     }
 
     static boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                .setSigningKey(SECRET)
-                .build()
-                .parseClaimsJws(token)
+                    .setSigningKey(SECRET)
+                    .build()
+                    .parseClaimsJws(token)
 
             return true
         } catch (Exception ignored) {
